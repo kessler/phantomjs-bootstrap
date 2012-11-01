@@ -3,18 +3,18 @@ var fs = require('fs');
 var args = parseArguments(phantom.args);
 
 if (!args['--main']) 
- 	throw 'usage:\n phantomjs bootstrap.js \n--main=<main script to run> \n--script-tag-libs=<additional libs separated by;> \n--require-libs=<additional libs separated by;>';
+ 	throw 'usage:\n phantomjs bootstrap.js \n--main=<main script to run> \n--require=<additional libs separated by;> \n--inject=<additional libs separated by;>';
 
 var main = './' + args['--main'];
 
 if (!fs.exists(main)) 
 	throw 'cannot find ' + main;
 
-if (args['--require-libs'])
-	loadLibraries(requireScript, args['--require-libs']);
+if (args['--require'])
+	loadLibraries(requireScript, args['--require']);
 
-if (args['--script-tag-libs'])	
-	loadLibraries(injectScript, args['--script-tag-libs']);
+if (args['--inject'])	
+	loadLibraries(injectScript, args['--inject']);
 
 requireScript(main);
 
@@ -53,9 +53,7 @@ function loadLibraries(loadFunctor, data) {
 
 function injectScript(path) {
 	console.log('injecting ' + path);
-	var script = document.createElement('script');	
-	script.innerHTML = fs.read(path);
-	document.head.appendChild(script);	
+	phantom.injectJs(path);
 }
 
 function requireScript(path) {
