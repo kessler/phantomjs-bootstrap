@@ -1,0 +1,1 @@
+phantomjs bootstrap.js --main=main.js --script-tag-libs=scriptlib --require-libs=requirelib

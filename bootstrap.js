@@ -1,54 +1,79 @@
 var fs = require('fs');
 
-if (phantom.args.length === 0) 
- 	throw 'usage:\n phantomjs bootstrap.js <main script to run> <additional libs separated by;>';
+var args = parseArguments(phantom.args);
 
-var main = './' + phantom.args[0];
+if (!args['--main']) 
+ 	throw 'usage:\n phantomjs bootstrap.js \n--main=<main script to run> \n--script-tag-libs=<additional libs separated by;> \n--require-libs=<additional libs separated by;>';
+
+var main = './' + args['--main'];
 
 if (!fs.exists(main)) 
 	throw 'cannot find ' + main;
-	
-loadLibraries();
 
-readAndEvaluateScript(main);
+if (args['--require-libs'])
+	loadLibraries(requireScript, args['--require-libs']);
 
-function loadLibraries() {
-	if (phantom.args.length > 1) {
-		
-		var libPath = phantom.args[1].split(';');
+if (args['--script-tag-libs'])	
+	loadLibraries(injectScript, args['--script-tag-libs']);
 
-		for (var i = 0; i < libPath.length; i++) {
-			var currentPath = fs.workingDirectory + fs.separator + libPath[i];
+requireScript(main);
 
-			if (!fs.exists(currentPath)) 
-				throw 'cannot find ' + currentPath;
+function loadLibraries(loadFunctor, data) {
+			
+	var libPath = data.split(';');
 
-			if (fs.isDirectory(currentPath)) {
-				var files = fs.list(currentPath);
-				
-				for (var x = 0; x < files.length; x++) {
-				
-					var filename = files[x];
-					var extension = filename.substr(-3);
+	for (var i = 0; i < libPath.length; i++) {
+		var currentPath = fs.workingDirectory + fs.separator + libPath[i];
 
-					if (typeof(extension) === 'string') {
-						extension = extension.toLowerCase();
+		if (!fs.exists(currentPath)) 
+			throw 'cannot find ' + currentPath;
 
-						if (extension === '.js')					
-							readAndEvaluateScript('./' + libPath + '/' + filename);
-					}
+		if (fs.isDirectory(currentPath)) {
+			var files = fs.list(currentPath);
+			
+			for (var x = 0; x < files.length; x++) {
+			
+				var filename = files[x];
+				var extension = filename.substr(-3);
+
+				if (typeof(extension) === 'string') {
+					extension = extension.toLowerCase();
+
+					if (extension === '.js')					
+						loadFunctor('./' + libPath[i] + '/' + filename);
 				}
-
-			} else {
-
-				readAndEvaluateScript('./' +libPath[i]);
 			}
-		}	
+
+		} else {
+
+			loadFunctor('./' +libPath[i]);
+		}			
 	}
 }
 
-function readAndEvaluateScript(path) {
-	console.log('loading ' + path);
-	//var script = fs.read(path);
+function injectScript(path) {
+	console.log('injecting ' + path);
+	var script = document.createElement('script');	
+	script.innerHTML = fs.read(path);
+	document.head.appendChild(script);	
+}
+
+function requireScript(path) {
+	console.log('requiring ' + path);	
 	require(path);
+}
+
+function parseArguments(args) {
+	var parsedArguments = {};
+
+	for (var x = 0; x < args.length; x++) {
+		var pair = args[x].split('=');
+
+		if (pair.length === 1)
+			parsedArguments[pair[0]] = '';
+		else if (pair.length === 2)
+			parsedArguments[pair[0]] = pair[1];
+	}
+
+	return parsedArguments;
 }
