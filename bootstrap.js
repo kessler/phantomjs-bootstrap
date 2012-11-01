@@ -3,7 +3,7 @@ var fs = require('fs');
 if (phantom.args.length === 0) 
  	throw 'usage:\n phantomjs bootstrap.js <main script to run> <additional libs separated by;>';
 
-var main = fs.workingDirectory + fs.separator + phantom.args[0];
+var main = './' + phantom.args[0];
 
 if (!fs.exists(main)) 
 	throw 'cannot find ' + main;
@@ -35,13 +35,13 @@ function loadLibraries() {
 						extension = extension.toLowerCase();
 
 						if (extension === '.js')					
-							readAndEvaluateScript(currentPath + fs.separator + filename);
+							readAndEvaluateScript('./' + libPath + '/' + filename);
 					}
 				}
 
 			} else {
 
-				readAndEvaluateScript(currentPath);
+				readAndEvaluateScript('./' +libPath[i]);
 			}
 		}	
 	}
@@ -49,6 +49,6 @@ function loadLibraries() {
 
 function readAndEvaluateScript(path) {
 	console.log('loading ' + path);
-	var script = fs.read(path);
-	eval(script);
+	//var script = fs.read(path);
+	require(path);
 }
