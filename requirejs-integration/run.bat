@@ -1,0 +1,1 @@
+phantomjs bootstrap.js --main=requirejs-integration.js --inject=lib/require.js

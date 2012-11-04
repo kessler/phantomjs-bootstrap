@@ -1,0 +1,1 @@
+phantomjs bootstrap.js --main=simple-example.js --inject=scriptlib --require=requirelib/3.js;requirelib/4.js

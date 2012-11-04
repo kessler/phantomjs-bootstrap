@@ -1,7 +1,7 @@
 phantomjs-bootstrap
 ===================
 
-A simple bootstrap script to load PhantomJS with additional dependencies. Clone or download bootstrap.js and run. (lib directory and main.js are just an example)
+A bootstrap script to load PhantomJS with additional dependencies. Simply download bootstrap.js alone (the rest are examples)
 
 Syntax:
 
@@ -15,3 +15,11 @@ Additional information
 * required libs will be loaded using require() while injected ones will be loaded using phantom.injectJs()
 * The main script will be evaludated after the the rest of the libraries are loaded and those will be evaluated in the order they were specified. Required libraries will always be evaluated before injected ones.
 * The additional scripts will a `;` separated list of either directories or files. In case of a directory the bootstrap will iterate and evaluate all the .js child files that reside inside it.
+
+About the examples
+------------------
+
+* simple-example 
+	* requires (`require()`) requirelib/3.js and then requirelib/4.js and then injects all the scripts under scriptlib (in the order the file system returns them)
+* requirejs-example: 
+	* shows how to initialize requirejs to work inside phantomjs with full access to phantomjs apis (i.e not in a page context)
