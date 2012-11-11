@@ -16,9 +16,10 @@ requirejs.config(config);
 requirejs(  
     ['Foo'],
     function(Foo) {        
-        /*var foo = new Foo();
+
+        var foo = new Foo();
 
         foo.bar();
-        foo.bat('meow');*/
+        foo.bar('meow');
     }
 );

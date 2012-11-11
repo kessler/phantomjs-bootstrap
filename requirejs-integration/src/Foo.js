@@ -1,11 +1,11 @@
-define(['lib/toolkit'], function(toolkit) {
+define(['toolkit/toolkit'], function(toolkit) {
 	
 	function Foo() {
 
 	}
 
 	Foo.prototype.bar = function(arg) {
-
+		
 		if (toolkit.isUndefined(arg))
 			console.log('OMG!');
 		else

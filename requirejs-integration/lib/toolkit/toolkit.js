@@ -5,5 +5,6 @@ define([], function() {
 			return typeof(something) !== 'undefined';
 		}
 	};
-	
+
+	return toolkit;	
 });
